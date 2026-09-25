@@ -18,8 +18,9 @@ def click():
     if text.strip() == "":  # Check if the text is empty
         idea_input.clear()
         return
-    ideas_list.addItem(text)
     ideas.append(text)
+    ideas_list.addItem(f"{len(ideas)}. {text}")
+
     idea_input.clear()
     print(ideas)
 
