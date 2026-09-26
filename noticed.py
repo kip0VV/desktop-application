@@ -1,3 +1,4 @@
+import sqlite3
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QApplication,
@@ -7,6 +8,17 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+
+connection = sqlite3.connect("noticed.db")
+
+connection.execute("""
+CREATE TABLE IF NOT EXISTS ideas (
+    id INTEGER PRIMARY KEY,
+    text TEXT NOT NULL
+)
+""")
+
 
 app = QApplication([])
 window = QWidget()
@@ -18,9 +30,13 @@ def click():
     if text.strip() == "":  # Check if the text is empty
         idea_input.clear()
         return
+    connection.execute(
+        "INSERT INTO ideas (text) VALUES (?)",
+        (text,)
+    )
+    connection.commit()
     ideas.append(text)
     ideas_list.addItem(f"{len(ideas)}. {text}")
-
     idea_input.clear()
     print(ideas)
 
@@ -38,6 +54,13 @@ class IdeaInput(QPlainTextEdit):
 idea_input = IdeaInput()
 save_button = QPushButton("Save Idea")
 ideas_list = QListWidget()
+
+result = connection.execute("SELECT id, text FROM ideas ORDER BY id")
+rows = result.fetchall()
+for row in rows:
+    ideas.append(row[1])
+    ideas_list.addItem(f"{len(ideas)}. {row[1]}")
+
 
 window.setWindowTitle("Noticed")
 layout.addWidget(idea_input)
