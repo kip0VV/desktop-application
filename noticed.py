@@ -9,8 +9,11 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from pathlib import Path
+db_path = Path(__file__).resolve().parent / "noticed.db"
 
-connection = sqlite3.connect("noticed.db")
+
+connection = sqlite3.connect(db_path)
 
 connection.execute("""
 CREATE TABLE IF NOT EXISTS ideas (
@@ -71,3 +74,4 @@ save_button.clicked.connect(click)
 
 window.show()
 app.exec()
+connection.close()
