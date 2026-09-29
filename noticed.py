@@ -33,10 +33,12 @@ def click():
     if text.strip() == "":  # Check if the text is empty
         idea_input.clear()
         return
-    connection.execute(
+    cursor = connection.execute(
         "INSERT INTO ideas (text) VALUES (?)",
         (text,)
     )
+    new_id = cursor.lastrowid
+    
     connection.commit()
     ideas.append(text)
     ideas_list.addItem(f"{len(ideas)}. {text}")
