@@ -38,9 +38,9 @@ def click():
         (text,)
     )
     new_id = cursor.lastrowid
-    
+
     connection.commit()
-    ideas.append(text)
+    ideas.append((new_id, text))
     ideas_list.addItem(f"{len(ideas)}. {text}")
     idea_input.clear()
     print(ideas)
@@ -63,7 +63,7 @@ ideas_list = QListWidget()
 result = connection.execute("SELECT id, text FROM ideas ORDER BY id")
 rows = result.fetchall()
 for row in rows:
-    ideas.append(row[1])
+    ideas.append(row)
     ideas_list.addItem(f"{len(ideas)}. {row[1]}")
 
 
