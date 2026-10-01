@@ -45,6 +45,17 @@ def click():
     idea_input.clear()
     print(ideas)
 
+def delete_idea():
+    if(ideas_list.currentRow() != -1):
+        index = ideas_list.currentRow()
+        idea_id = ideas[index][0]
+        connection.execute("DELETE FROM ideas WHERE id = ?", (idea_id,))
+        connection.commit()
+        ideas.pop(index)
+        ideas_list.clear()
+        for number, text in enumerate(ideas, start=1):
+            ideas_list.addItem(f"{number}. {text[1]}")
+        print(ideas)
 
 
 layout = QVBoxLayout(window)
@@ -58,6 +69,7 @@ class IdeaInput(QPlainTextEdit):
 
 idea_input = IdeaInput()
 save_button = QPushButton("Save Idea")
+delete_button = QPushButton("Delete Idea")
 ideas_list = QListWidget()
 
 result = connection.execute("SELECT id, text FROM ideas ORDER BY id")
@@ -70,9 +82,11 @@ for row in rows:
 window.setWindowTitle("Noticed")
 layout.addWidget(idea_input)
 layout.addWidget(save_button)
+layout.addWidget(delete_button)
 layout.addWidget(ideas_list)
 
 save_button.clicked.connect(click)
+delete_button.clicked.connect(delete_idea)
 
 window.show()
 app.exec()
